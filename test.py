@@ -26,9 +26,9 @@ def initialize_driver():
     except Exception as e:
         print(f"[ERROR] Failed to initialize WebDriver: {e}")
         return None
-
+        
 def get_video_and_subtitles(url):
-    """Extracts video source URL and subtitle URLs from the page and saves them to d.json."""
+    """Extracts video source URL and subtitle URLs from the page and saves them to d.json and index.html."""
     print(f"[INFO] Opening URL: {url}")
     driver = initialize_driver()
     
@@ -44,6 +44,14 @@ def get_video_and_subtitles(url):
     subtitle_tracks = []
 
     try:
+        # Save the page source as index.html
+        with open("index.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
+        print("[SUCCESS] Page saved as index.html.")
+        print(30*"--")
+        print(driver.page_source)
+        print(30*"--")
+        
         # Find the video element
         print("[INFO] Searching for video element...")
         video_element = driver.find_element(By.CSS_SELECTOR, 'video[preload="metadata"]')
@@ -68,12 +76,10 @@ def get_video_and_subtitles(url):
         else:
             print("[WARNING] No subtitles found!")
 
-        # # Save data to JSON file
+        # Save data to JSON file
         data = {"url": video_source, "subtitles": subtitle_tracks}
-        
         # with open("d.json", "w", encoding="utf-8") as json_file:
         #     json.dump(data, json_file, indent=4)
-        print(data)
         print("[SUCCESS] Data saved to d.json!")
 
     except Exception as e:
@@ -83,6 +89,9 @@ def get_video_and_subtitles(url):
         print("[INFO] Closing WebDriver...")
         driver.quit()
         print("[INFO] WebDriver closed.")
+
+
+
 
 # Example usage
 url = "https://www.miruro.tv/watch?id=176496&ep=2"
